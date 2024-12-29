@@ -1,0 +1,31 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: AUTH-SERVICE
+  datasource:
+    url: jdbc:postgresql://localhost:5432/coderank  # Use 'db' as the host for the Docker network
+    driverClassName: org.postgresql.Driver
+    username: ${SPRING_DATASOURCE_USERNAME:root} # Username from docker-compose environment
+    password: ${SPRING_DATASOURCE_PASSWORD:root} # Password from docker-compose environment
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://service-registry:8761/eureka
+      #defaultZone: http://localhost:8761/eureka

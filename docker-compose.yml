@@ -1,0 +1,41 @@
+services:
+  service-registry:
+    build:
+      context: ./ServiceRegistry
+    image: service-registry
+    ports:
+      - "8761:8761"
+    restart: always
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:latest
+    container_name: postgresdb
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: coderank
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  # AuthService
+  auth-service:
+    image: auth-service
+    build:
+      context: ./AuthService
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/coderank
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - service-registry
+      - postgres
+    restart: always
+
+volumes:
+  postgres_data:
