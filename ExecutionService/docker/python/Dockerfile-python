@@ -1,0 +1,12 @@
+# Dockerfile for Python Code Execution
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy the Python execution script
+COPY execute.py /app/execute.py
+
+# Install any necessary dependencies
+RUN chmod +x /app/execute.py
+
+ENTRYPOINT ["python", "/app/execute.py"]

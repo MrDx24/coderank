@@ -1,0 +1,10 @@
+# Dockerfile for C/C++ Code Execution
+FROM gcc:12-slim
+
+WORKDIR /app
+
+# Copy the C/C++ execution script
+COPY execute.sh /app/execute.sh
+RUN chmod +x /app/execute.sh
+
+ENTRYPOINT ["/app/execute.sh"]

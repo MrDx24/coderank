@@ -1,1 +1,52 @@
-spring.application.name=ApiGateway
+#spring.application.name=ApiGateway
+server:
+  port: 8081
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: AUTH-SERVICE
+          #uri: lb://AUTH-SERVICE       # Use load-balanced URI for AUTH-SERVICE
+          uri: http://localhost:8082    # Use localhost URI
+          predicates:
+            - Path=/api/v1/users/**
+
+        - id: TASKQUEUE-SERVICE
+          #uri: lb://TASKQUEUE-SERVICE  # Load-balanced URI for TASKQUEUE-SERVICE
+          uri: http://localhost:8083    # Use localhost URI
+          predicates:
+            - Path=/api/v1/tasks/**
+
+        - id: EXECUTION-SERVICE
+          #uri: lb://EXECUTION-SERVICE  # Load-balanced URI for EXECUTION-SERVICE
+          uri: http://localhost:8084    # Use localhost URI
+          predicates:
+            - Path=/api/v1/code-execution/**
+
+
+auth:
+  service:
+    url: http://localhost:8082/api/v1/users
+
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      #defaultZone: http://service-registry:8761/eureka
+      defaultZone: http://localhost:8761/eureka
+
+jwt:
+  secret: "0E654ACB6F4BB78AE105A53BDE251383B7D614C0CD324F83AA8BAD0DF73FD0A4"
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG

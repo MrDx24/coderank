@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AuthService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AuthService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ExecutionService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ExecutionService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TaskQueueService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/TaskQueueService.main.iml" />
     </modules>
   </component>
 </project>

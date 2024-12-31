@@ -1,0 +1,11 @@
+# Dockerfile for Java Code Execution
+FROM openjdk:21-jdk-slim
+
+WORKDIR /app
+
+# Copy the script to execute Java code
+COPY execute.sh /app/execute.sh
+RUN chmod +x /app/execute.sh
+
+# Entry point
+ENTRYPOINT ["/app/execute.sh"]

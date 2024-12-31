@@ -6,6 +6,7 @@ import com.coderank.authservice.AuthService.repository.AuthRepository;
 import com.coderank.authservice.AuthService.service.AuthService;
 import com.coderank.authservice.AuthService.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 public class AuthController {
 
     private AuthService authService;
@@ -102,13 +103,18 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/validate")
-    public ResponseEntity<Map<String, Object>> validateToken(@RequestParam("token") String authToken) {
+    @PostMapping("/validate")
+    public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String authToken) {
         Map<String, Object> response = new HashMap<>();
+
+        String token = authToken;
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
 
         try {
             // Authenticate user
-            boolean checkClaim = jwtService.isTokenValid(authToken);
+            boolean checkClaim = jwtService.isTokenValid(token);
 
             // Check if JWT token is valid or not
             if (checkClaim) {
