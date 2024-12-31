@@ -1,1 +1,25 @@
-spring.application.name=TaskQueueService
+#spring.application.name=TaskQueueService
+server:
+  port: 8083
+
+spring:
+  application:
+    name: TASKQUEUE-SERVICE
+  cloud:
+    discovery:
+      enabled: true
+
+rabbitmq:
+  host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+  port: ${SPRING_RABBITMQ_PORT:5672}
+  username: ${SPRING_RABBITMQ_USERNAME:guest}
+  password: ${SPRING_RABBITMQ_PASSWORD:guest}
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://service-registry:8761/eureka
+#      defaultZone: http://localhost:8761/eureka
+
