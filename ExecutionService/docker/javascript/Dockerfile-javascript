@@ -6,7 +6,5 @@ WORKDIR /app
 # Copy the Node.js execution script
 COPY execute.js /app/execute.js
 
-# Install any necessary dependencies (if needed)
-RUN npm install
-
+# Skip npm install if no dependencies
 ENTRYPOINT ["node", "/app/execute.js"]

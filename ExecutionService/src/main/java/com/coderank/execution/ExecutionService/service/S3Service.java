@@ -1,5 +1,6 @@
 package com.coderank.execution.ExecutionService.service;
 
+import com.coderank.execution.ExecutionService.util.DatabaseSecretsUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -14,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,12 +24,15 @@ public class S3Service {
     private final S3Client s3Client;
     private final String bucketName;
 
-    public S3Service(
-            @Value("${aws.s3.access-key}") String accessKey,
-            @Value("${aws.s3.secret-key}") String secretKey,
-            @Value("${aws.s3.region}") String region,
-            @Value("${aws.s3.bucket}") String bucketName) {
-        this.bucketName = bucketName;
+    public S3Service(DatabaseSecretsUtil databaseSecretsUtil) {
+        // Fetch secrets from the database
+        Map<String, String> secrets = databaseSecretsUtil.getSecrets("aws_credentials");
+        String accessKey = secrets.get("AWS_ACCESS_KEY");
+        String secretKey = secrets.get("AWS_SECRET_KEY");
+        String region = secrets.get("AWS_REGION");
+        this.bucketName = "coderank-bucket"; // Or fetch from database if needed
+
+        // Create S3 client with the fetched credentials
         AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
         this.s3Client = S3Client.builder()
                 .region(Region.of(region))

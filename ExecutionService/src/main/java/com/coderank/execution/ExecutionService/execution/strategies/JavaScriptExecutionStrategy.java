@@ -42,7 +42,7 @@ public class JavaScriptExecutionStrategy implements CodeExecutionStrategy {
                 "--network", "none",
                 "--security-opt", "no-new-privileges",
                 "-i",
-                "coderank-node"  // Using ENTRYPOINT from Dockerfile
+                "coderank-javascript"  // Using ENTRYPOINT from Dockerfile
         );
         processBuilder.redirectErrorStream(true);
 

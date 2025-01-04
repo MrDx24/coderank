@@ -31,10 +31,6 @@ public class DockerInitializer {
         String dockerfilePathPython = contextPython + File.separator + "Dockerfile-python";
         String imagePython = "coderank-python";
 
-        // Go
-        String contextGo = buildContextPath + File.separator + "go";
-        String dockerfilePathGo = contextGo + File.separator + "Dockerfile-go";
-        String imageGo = "coderank-go";
 
         // Javascript
         String contextJavascript = buildContextPath + File.separator + "javascript";
@@ -46,18 +42,11 @@ public class DockerInitializer {
         String dockerfilePathRuby = contextRuby + File.separator + "Dockerfile-ruby";
         String imageRuby = "coderank-ruby";
 
-        // C/C++
-        String contextCPlusPlus = buildContextPath + File.separator + "cplusplus";
-        String dockerfilePathCPlusPlus = contextCPlusPlus + File.separator + "Dockerfile-cplusplus";
-        String imageCPlusPlus = "coderank-cplusplus";
-
         try {
             dockerService.buildDockerImage(imagePython, dockerfilePathPython, contextPython);
             dockerService.buildDockerImage(imageJava, dockerfilePathJava, contextJava);
-            dockerService.buildDockerImage(imageGo, dockerfilePathGo, contextGo);
             dockerService.buildDockerImage(imageJavascript, dockerfilePathJavascript, contextJavascript);
             dockerService.buildDockerImage(imageRuby, dockerfilePathRuby, contextRuby);
-            dockerService.buildDockerImage(imageCPlusPlus, dockerfilePathCPlusPlus, contextCPlusPlus);
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize Docker images", e);
         }

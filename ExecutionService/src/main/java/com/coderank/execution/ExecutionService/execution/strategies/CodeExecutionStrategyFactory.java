@@ -12,11 +12,8 @@ public class CodeExecutionStrategyFactory {
     public CodeExecutionStrategyFactory(DockerService dockerService, String memoryLimit, String cpuLimit) {
         strategies.put("java", new JavaExecutionStrategy(dockerService, memoryLimit, cpuLimit));
         strategies.put("python", new PythonExecutionStrategy(dockerService, memoryLimit, cpuLimit));
-        strategies.put("go", new GoExecutionStrategy(dockerService, memoryLimit, cpuLimit));
         strategies.put("javascript", new JavaScriptExecutionStrategy(dockerService, memoryLimit, cpuLimit));
         strategies.put("ruby", new RubyExecutionStrategy(dockerService, memoryLimit, cpuLimit));
-        strategies.put("cpp", new CppExecutionStrategy(dockerService, memoryLimit, cpuLimit));
-        //strategies.put("c++", new CppExecutionStrategy(dockerService, memoryLimit, cpuLimit));
     }
 
     public CodeExecutionStrategy getStrategy(String language) {
