@@ -9,8 +9,8 @@ spring:
     discovery:
       enabled: true
   datasource:
-    #url: jdbc:postgresql://localhost:5432/coderank
-    url: jdbc:postgresql://postgres:5432/coderank
+    url: jdbc:postgresql://localhost:5432/coderank
+    #url: jdbc:postgresql://postgres:5432/coderank
     driverClassName: org.postgresql.Driver
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:root}

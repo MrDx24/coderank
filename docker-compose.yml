@@ -93,9 +93,16 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/coderank
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
     depends_on:
       - service-registry
       - rabbitmq
+      - postgres
+      - task-queue-service
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Mount Docker socket
     restart: always 
 
 volumes:
