@@ -48,8 +48,7 @@ public class ExecutionService {
 
             storageService.saveExecutionLog(codeSnippet.getId(), output, "SUCCESS", time);
 
-            ExecutionResponse executionResponse = new ExecutionResponse(
-                    reqId, output, time, "SUCCESS");
+            ExecutionResponse executionResponse = new ExecutionResponse(reqId, output, time, "SUCCESS");
             rabbitTemplate.convertAndSend("execution-response-queue", executionResponse);
 
         } catch (UnsupportedOperationException e) {
