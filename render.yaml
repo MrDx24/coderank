@@ -1,13 +1,11 @@
-# Render.yaml configuration for CodeRank application
 services:
   # Service Registry (Eureka)
   - type: web
     name: service-registry
     runtime: docker
     dockerfilePath: ./ServiceRegistry/Dockerfile
-    port: 8761
-    autoDeploy: false
-    healthCheckPath: /eureka/apps
+    plan: starter
+    numInstances: 1
     envVars: []
 
   # API Gateway
@@ -15,9 +13,8 @@ services:
     name: api-gateway
     runtime: docker
     dockerfilePath: ./ApiGateway/Dockerfile
-    port: 8081
-    autoDeploy: false
-    healthCheckPath: /actuator/health
+    plan: starter
+    numInstances: 1
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://service-registry:8761/eureka
@@ -29,9 +26,8 @@ services:
     name: auth-service
     runtime: docker
     dockerfilePath: ./AuthService/Dockerfile
-    port: 8082
-    autoDeploy: false
-    healthCheckPath: /actuator/health
+    plan: starter
+    numInstances: 1
     envVars:
       - key: SPRING_DATASOURCE_URL
         fromDatabase:
@@ -51,16 +47,15 @@ services:
     name: task-queue-service
     runtime: docker
     dockerfilePath: ./TaskQueueService/Dockerfile
-    port: 8083
-    autoDeploy: false
-    healthCheckPath: /actuator/health
+    plan: starter
+    numInstances: 1
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://service-registry:8761/eureka
       - key: SPRING_RABBITMQ_HOST
         fromService:
+          name: rabbitmq-service
           type: pserv
-          name: rabbitmq
           property: host
       - key: SPRING_RABBITMQ_PORT
         value: "5672"
@@ -74,9 +69,8 @@ services:
     name: execution-service
     runtime: docker
     dockerfilePath: ./ExecutionService/Dockerfile
-    port: 8084
-    autoDeploy: false
-    healthCheckPath: /actuator/health
+    plan: starter
+    numInstances: 1
     disk:
       name: docker-socket
       mountPath: /var/run/docker.sock
@@ -85,8 +79,8 @@ services:
         value: http://service-registry:8761/eureka
       - key: SPRING_RABBITMQ_HOST
         fromService:
+          name: rabbitmq-service
           type: pserv
-          name: rabbitmq
           property: host
       - key: SPRING_RABBITMQ_PORT
         value: "5672"
@@ -107,21 +101,20 @@ services:
           name: postgres
           property: password
 
-  # Message Queue
+  # RabbitMQ Service
   - type: pserv
-    name: rabbitmq
+    name: rabbitmq-service
     runtime: docker
-    image: rabbitmq:management
-    port: 5672
-    autoDeploy: false
+    repo: https://hub.docker.com/_/rabbitmq
+    dockerCommand: rabbitmq:management
+    plan: starter
     disk:
       name: rabbitmq-data
       mountPath: /var/lib/rabbitmq
     envVars: []
 
-# Database Services
 databases:
   - name: postgres
     databaseName: coderank
     user: root
-    ipAllowList: []  # All IPs allowed
+    ipAllowList: []
