@@ -9,7 +9,7 @@ services:
       - 8761
 
   - name: postgres
-    type: postgres
+    type: web
     runtime: docker
     plan: starter
     envVars:
