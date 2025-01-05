@@ -1,108 +1,127 @@
+# Render.yaml configuration for CodeRank application
 services:
-  - name: service-registry
-    type: web
+  # Service Registry (Eureka)
+  - type: web
+    name: service-registry
     runtime: docker
-    env: docker
     dockerfilePath: ./ServiceRegistry/Dockerfile
-    plan: starter
-    ports:
-      - 8761
+    port: 8761
+    autoDeploy: false
+    healthCheckPath: /eureka/apps
+    envVars: []
 
-  - name: rabbitmq
-    type: web
-    env: docker
-    runtime: docker
-    dockerImage: rabbitmq:management
-    plan: starter
-    ports:
-      - 5672
-      - 15672
-
-  - name: api-gateway
-    type: web
-    env: docker
+  # API Gateway
+  - type: web
+    name: api-gateway
     runtime: docker
     dockerfilePath: ./ApiGateway/Dockerfile
-    plan: starter
+    port: 8081
+    autoDeploy: false
+    healthCheckPath: /actuator/health
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://service-registry:8761/eureka
       - key: SPRING_PROFILES_ACTIVE
         value: docker
-    ports:
-      - 8081
 
-  - name: auth-service
-    type: web
-    env: docker
+  # Auth Service
+  - type: web
+    name: auth-service
     runtime: docker
     dockerfilePath: ./AuthService/Dockerfile
-    plan: starter
+    port: 8082
+    autoDeploy: false
+    healthCheckPath: /actuator/health
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://postgres:5432/coderank
+        fromDatabase:
+          name: postgres
+          property: connectionString
       - key: SPRING_DATASOURCE_USERNAME
-        value: root
+        fromDatabase:
+          name: postgres
+          property: user
       - key: SPRING_DATASOURCE_PASSWORD
-        value: root
-    ports:
-      - 8082
+        fromDatabase:
+          name: postgres
+          property: password
 
-  - name: task-queue-service
-    type: web
-    env: docker
+  # Task Queue Service
+  - type: web
+    name: task-queue-service
     runtime: docker
     dockerfilePath: ./TaskQueueService/Dockerfile
-    plan: starter
+    port: 8083
+    autoDeploy: false
+    healthCheckPath: /actuator/health
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://service-registry:8761/eureka
       - key: SPRING_RABBITMQ_HOST
-        value: rabbitmq
+        fromService:
+          type: pserv
+          name: rabbitmq
+          property: host
       - key: SPRING_RABBITMQ_PORT
-        value: 5672
+        value: "5672"
       - key: SPRING_RABBITMQ_USERNAME
         value: guest
       - key: SPRING_RABBITMQ_PASSWORD
         value: guest
-    ports:
-      - 8083
 
-  - name: execution-service
-    type: web
-    env: docker
+  # Execution Service
+  - type: web
+    name: execution-service
     runtime: docker
     dockerfilePath: ./ExecutionService/Dockerfile
-    plan: starter
+    port: 8084
+    autoDeploy: false
+    healthCheckPath: /actuator/health
+    disk:
+      name: docker-socket
+      mountPath: /var/run/docker.sock
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://service-registry:8761/eureka
       - key: SPRING_RABBITMQ_HOST
-        value: rabbitmq
+        fromService:
+          type: pserv
+          name: rabbitmq
+          property: host
       - key: SPRING_RABBITMQ_PORT
-        value: 5672
+        value: "5672"
       - key: SPRING_RABBITMQ_USERNAME
         value: guest
       - key: SPRING_RABBITMQ_PASSWORD
         value: guest
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://postgres:5432/coderank
+        fromDatabase:
+          name: postgres
+          property: connectionString
       - key: SPRING_DATASOURCE_USERNAME
-        value: root
+        fromDatabase:
+          name: postgres
+          property: user
       - key: SPRING_DATASOURCE_PASSWORD
-        value: root
-    ports:
-      - 8084
+        fromDatabase:
+          name: postgres
+          property: password
 
+  # Message Queue
+  - type: pserv
+    name: rabbitmq
+    runtime: docker
+    image: rabbitmq:management
+    port: 5672
+    autoDeploy: false
+    disk:
+      name: rabbitmq-data
+      mountPath: /var/lib/rabbitmq
+    envVars: []
+
+# Database Services
 databases:
   - name: postgres
-    postgresMajorVersion: "16"
-    region: frankfurt
-    plan: basic-4gb
-    envVars:
-      - key: POSTGRES_USER
-        value: root
-      - key: POSTGRES_PASSWORD
-        value: root
-      - key: POSTGRES_DB
-        value: coderank
+    databaseName: coderank
+    user: root
+    ipAllowList: []  # All IPs allowed
