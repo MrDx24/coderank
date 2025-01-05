@@ -8,18 +8,6 @@ services:
     ports:
       - 8761
 
-  - name: postgres
-    type: web
-    runtime: docker
-    plan: starter
-    envVars:
-      - key: POSTGRES_USER
-        value: root
-      - key: POSTGRES_PASSWORD
-        value: root
-      - key: POSTGRES_DB
-        value: coderank
-
   - name: rabbitmq
     type: web
     env: docker
@@ -105,3 +93,16 @@ services:
         value: root
     ports:
       - 8084
+
+databases:
+  - name: postgres
+    postgresMajorVersion: "16"
+    region: frankfurt
+    plan: basic-4gb
+    envVars:
+      - key: POSTGRES_USER
+        value: root
+      - key: POSTGRES_PASSWORD
+        value: root
+      - key: POSTGRES_DB
+        value: coderank
