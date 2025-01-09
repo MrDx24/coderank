@@ -2,7 +2,6 @@ package com.coderank.execution.ExecutionService.service;
 
 import com.coderank.execution.ExecutionService.model.ExecutionHistoryResponse;
 import com.coderank.execution.ExecutionService.repository.CodeSnippetRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

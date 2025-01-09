@@ -84,21 +84,20 @@ public class AuthController {
 
                 // Fetch user details from your database (repository)
                 Users userDetails = authRepository.findByEmail(email)
-                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                        .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
 
                 String token = jwtService.generateToken(userDetails.getEmail());
-                response.put("status", "Success");
                 response.put("message", "Login successful");
                 response.put("token", token);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("status", "Error");
-                response.put("message", "Login failed");
+                response.put("message", "Invalid Email or Password");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
         } catch (Exception e) {
             response.put("status", "Error");
-            response.put("message", "An error occurred: " + e.getMessage());
+            response.put("message", "Invalid Email");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

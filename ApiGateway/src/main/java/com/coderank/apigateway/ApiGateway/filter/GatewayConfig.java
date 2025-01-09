@@ -19,13 +19,13 @@ public class GatewayConfig {
                 // TASKQUEUE-SERVICE
                 .route("TASKQUEUE-SERVICE", r -> r.path("api/v1/tasks/**")
                 .filters(f -> f.filter(authFilter))
-                        .uri("lb://TASKQUEUE-SERVICE"))
-                        //.uri("http://localhost:8083"))
+                        //.uri("lb://TASKQUEUE-SERVICE"))
+                        .uri("http://localhost:8083"))
                 // EXECUTION-SERVICE
                 .route("EXECUTION-SERVICE", r -> r.path("api/v1/code-execution/**")
                         .filters(f -> f.filter(authFilter))
-                        .uri("lb://EXECUTION-SERVICE"))
-                        //.uri("http://localhost:8084"))
+                        //.uri("lb://EXECUTION-SERVICE"))
+                        .uri("http://localhost:8084"))
                 .build();
 
     }

@@ -1,10 +1,12 @@
 package com.coderank.execution.ExecutionService.config;
 
+import com.coderank.execution.ExecutionService.model.DockerInitializerHelper;
 import com.coderank.execution.ExecutionService.service.DockerService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.List;
 
 @Component
 public class DockerInitializer {
@@ -16,36 +18,34 @@ public class DockerInitializer {
 
     @PostConstruct
     public void initializeDockerImages() {
-        // The docker files will be in /app/ExecutionService/docker inside the container
-        String buildContextPath = "/app/ExecutionService/docker";
 
-        // Java
-        String contextJava = buildContextPath + "/java";
-        String dockerfilePathJava = contextJava + "/Dockerfile-java";
-        String imageJava = "coderank-java";
+        String buildContextPath = new File("").getAbsolutePath()
+                + File.separator + "ExecutionService"
+                + File.separator + "docker";
 
-        // Python
-        String contextPython = buildContextPath + "/python";
-        String dockerfilePathPython = contextPython + "/Dockerfile-python";
-        String imagePython = "coderank-python";
+        List<DockerInitializerHelper> dockerConfigs = List.of(
+                new DockerInitializerHelper("java" ),
+                new DockerInitializerHelper("python"),
+                new DockerInitializerHelper("javascript"),
+                new DockerInitializerHelper("ruby")
+        );
 
-        // Javascript
-        String contextJavascript = buildContextPath + "/javascript";
-        String dockerfilePathJavascript = contextJavascript + "/Dockerfile-javascript";
-        String imageJavascript = "coderank-javascript";
+        dockerConfigs.forEach(config -> {
+            try {
+                String contextPath = buildContextPath + File.separator + config.getLanguage();
+                String dockerfilePath = contextPath + File.separator + config.getDockerfileName();
 
-        // Ruby
-        String contextRuby = buildContextPath + "/ruby";
-        String dockerfilePathRuby = contextRuby + "/Dockerfile-ruby";
-        String imageRuby = "coderank-ruby";
+                dockerService.buildDockerImage(config.getImageName(), dockerfilePath, contextPath);
+            } catch (Exception e) {
+                // Log error and continue the flow
+                System.err.println("Failed to build Docker image for language: "
+                        + config.getLanguage() + ". Error: " + e.getMessage());
+            }
+        });
 
-        try {
-            dockerService.buildDockerImage(imagePython, dockerfilePathPython, contextPython);
-            dockerService.buildDockerImage(imageJava, dockerfilePathJava, contextJava);
-            dockerService.buildDockerImage(imageJavascript, dockerfilePathJavascript, contextJavascript);
-            dockerService.buildDockerImage(imageRuby, dockerfilePathRuby, contextRuby);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize Docker images", e);
-        }
+
     }
 }
+
+
+
