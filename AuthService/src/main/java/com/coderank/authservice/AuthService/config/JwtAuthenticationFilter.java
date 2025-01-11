@@ -19,11 +19,15 @@ import java.util.List;
 
 @Configuration
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    @Autowired
-    private JwtService jwtService;
+
+    private final JwtService jwtService;
+    private final AuthService authService;
 
     @Autowired
-    private AuthService authService;
+    public JwtAuthenticationFilter(JwtService jwtService, AuthService authService) {
+        this.jwtService = jwtService;
+        this.authService = authService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -42,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, // Set UserDetails as the principal
                         null,
-                        List.of()// Credentials can be null as we are using JWT
+                        List.of() // Credentials can be null as we are using JWT
                 );
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);

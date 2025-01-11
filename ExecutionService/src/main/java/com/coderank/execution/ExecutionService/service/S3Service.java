@@ -25,14 +25,12 @@ public class S3Service {
     private final String bucketName;
 
     public S3Service(DatabaseSecretsUtil databaseSecretsUtil) {
-        // Fetch secrets from the database
         Map<String, String> secrets = databaseSecretsUtil.getSecrets("aws_credentials");
         String accessKey = secrets.get("AWS_ACCESS_KEY");
         String secretKey = secrets.get("AWS_SECRET_KEY");
         String region = secrets.get("AWS_REGION");
-        this.bucketName = "coderank-bucket"; // Or fetch from database if needed
+        this.bucketName = "coderank-bucket";
 
-        // Create S3 client with the fetched credentials
         AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
         this.s3Client = S3Client.builder()
                 .region(Region.of(region))

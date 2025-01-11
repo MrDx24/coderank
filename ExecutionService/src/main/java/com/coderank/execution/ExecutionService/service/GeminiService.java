@@ -37,7 +37,6 @@ public class GeminiService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
         RestTemplate restTemplate = new RestTemplate();
 
-
         try {
             String urlWithApiKey = GEMINI_API_URL + "?key=" + apiKey;
             ResponseEntity<Map> response = restTemplate.postForEntity(urlWithApiKey, entity, Map.class);
@@ -102,7 +101,6 @@ public class GeminiService {
             if(parts.isEmpty()){
                 return new AnalysisResponse("Invalid Gemini API Response: cast fail in parts", null);
             }
-
             Map<String, Object> part = parts.get(0);
             if (!part.containsKey("text")) {
                 System.err.println("Invalid Gemini API Response: Missing 'text' field in part");

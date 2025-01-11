@@ -38,14 +38,6 @@ public class JwtService {
         return claims.getSubject();
     }
 
-    public String extractRole(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(secretKey).build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.get("role", String.class);
-    }
-
     private Claims getClaims(String jwt) {
         Claims claims = Jwts.parser()
                 .verifyWith(generateKey())

@@ -9,11 +9,11 @@ public class CodeExecutionStrategyFactory {
 
     private final Map<String, CodeExecutionStrategy> strategies = new HashMap<>();
 
-    public CodeExecutionStrategyFactory(DockerService dockerService, String memoryLimit, String cpuLimit) {
-        strategies.put("java", new JavaExecutionStrategy(dockerService, memoryLimit, cpuLimit));
-        strategies.put("python", new PythonExecutionStrategy(dockerService, memoryLimit, cpuLimit));
-        strategies.put("javascript", new JavaScriptExecutionStrategy(dockerService, memoryLimit, cpuLimit));
-        strategies.put("ruby", new RubyExecutionStrategy(dockerService, memoryLimit, cpuLimit));
+    public CodeExecutionStrategyFactory(String memoryLimit, String cpuLimit) {
+        strategies.put("java", new JavaExecutionStrategy(memoryLimit, cpuLimit));
+        strategies.put("python", new PythonExecutionStrategy(memoryLimit, cpuLimit));
+        strategies.put("javascript", new JavaScriptExecutionStrategy(memoryLimit, cpuLimit));
+        strategies.put("ruby", new RubyExecutionStrategy(memoryLimit, cpuLimit));
     }
 
     public CodeExecutionStrategy getStrategy(String language) {

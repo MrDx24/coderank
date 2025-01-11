@@ -1,6 +1,5 @@
 package com.coderank.apigateway.ApiGateway.filter;
 
-import com.coderank.apigateway.ApiGateway.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,27 +23,23 @@ import java.util.Map;
 @RefreshScope
 @Component
 @Slf4j
-public class AuthenticationFilter implements GatewayFilter{
-
-    private final RouteValidator validator;
-    private final JwtUtil jwtUtil;
-    private final WebClient webClient;
+public class AuthenticationFilter implements GatewayFilter {
 
     @Value("${auth.service.url}")
     private String authServiceUrl;
 
+    private final RouteValidator validator;
+    private final WebClient webClient;
+
     @Autowired
-    public AuthenticationFilter(RouteValidator validator, JwtUtil jwtUtil, WebClient.Builder webClientBuilder) {
+    public AuthenticationFilter(RouteValidator validator, WebClient.Builder webClientBuilder) {
         this.validator = validator;
-        this.jwtUtil = jwtUtil;
         this.webClient = webClientBuilder.build();
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-
-        log.info("Incoming Request: {}", request);
 
         if (validator.isSecured.test(request)) {
             if (authMissing(request)) {
@@ -56,7 +51,6 @@ public class AuthenticationFilter implements GatewayFilter{
                 token = token.substring(7);
             }
 
-            // Validate the token by calling the AuthService
             try {
                 return webClient.post()
                         .uri(authServiceUrl + "/validate")
@@ -75,7 +69,6 @@ public class AuthenticationFilter implements GatewayFilter{
                             return chain.filter(exchange);
                         });
             } catch (Exception e) {
-                log.error("Error during token validation", e);
                 return onError(exchange, "Error Validating Token", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
@@ -90,14 +83,10 @@ public class AuthenticationFilter implements GatewayFilter{
     private Mono<Void> onError(ServerWebExchange exchange, String errorMessage, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
-        log.error("Error: {} | Status Code: {}", errorMessage, httpStatus);
 
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-
-        // Create the error response body
         String errorJson = String.format("{\"error\": \"%s\"}", errorMessage);
 
-        // Write the JSON response to the body
         DataBuffer dataBuffer = response.bufferFactory().wrap(errorJson.getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(dataBuffer));
     }

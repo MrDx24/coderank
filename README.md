@@ -1,72 +1,70 @@
 # Coderank - Capstone Project
 
-## Overview
+## A Bird's-Eye View
 
-**Coderank** is an online code execution platform designed to compile and execute code in multiple programming languages. The system is built using a microservices architecture to ensure scalability and maintainability. The project involves seven core microservices:
+**Coderank** takes flight as an online code execution platform, empowering developers to compile and run code across various programming languages. Built with a modular microservices architecture for scalability and maintainability, Coderank boasts seven core services, each playing a vital role in the execution symphony:
 
-1. **ServiceRegistry** - Service registry for managing service discovery.
-2. **API Gateway** - Handles all incoming requests and routes them to the appropriate service.
-3. **AuthService** - Manages user authentication and authorization.
-4. **TaskQueueService** - Manages the task queue for code execution.
-5. **ExecutionService** - Executes code in different programming languages.
-6. **PostgreSQL** - Database for storing user information and execution data.
-7. **RabbitMQ** - Message broker for handling asynchronous communication between services.
+1. **ServiceRegistry (Eureka):** The maestro, keeping track of all services for seamless discovery.
+2. **API Gateway:** The facade, fielding incoming requests and routing them to the designated service.
+3. **AuthService:** The gatekeeper, ensuring user authentication and authorization.
+4. **TaskQueueService:** The conductor, orchestrating the task queue for code execution.
+5. **ExecutionService:** The virtuoso, executing code in diverse programming languages (Java, Python, JavaScript, Ruby!).
+6. **PostgreSQL:** The data vault, securely storing user information and execution records.
+7. **RabbitMQ:** The messenger, enabling asynchronous communication between services.
 
-This project uses Docker for containerization and Docker Compose for managing the multi-container architecture. The services are deployed on AWS Elastic Beanstalk for scalability and ease of management.
+Docker provides containerization magic, and Docker Compose orchestrates the multi-container masterpiece. Deployment happens on AWS Elastic Beanstalk, ensuring scalability and effortless management.
 
 ---
 
-## Table of Contents
+## Delving Deeper (Table of Contents)
 
 1. [Technologies Used](#technologies-used)
-2. [Architecture](#architecture)
-3. [Setup and Installation](#setup-and-installation)
-4. [Service Descriptions](#service-descriptions)
+2. [Architectural Marvel](#architecture)
+3. [Getting Started Guide](#setup-and-installation)
+4. [Service Spotlight](#service-descriptions)
 
 ---
 
-## Technologies Used
+## Technological Powerhouse](#technologies-used)
 
-- **Spring Boot** - Backend framework for building microservices.
-- **Docker** - Containerization tool for packaging and running applications.
-- **RabbitMQ** - Messaging broker for inter-service communication.
-- **PostgreSQL** - Relational database for storing user and task data.
-- **Eureka** - Service registry for managing microservices.
-- **AWS Elastic Beanstalk** - Platform-as-a-Service (PaaS) for deploying Dockerized applications.
-- **Docker Compose** - Tool for defining and running multi-container Docker applications.
-
----
-
-## Architecture
-
-The system follows a **microservices architecture** with the following components:
-
-1. **ServiceRegistry** (Eureka) - Central registry that all services communicate with for service discovery.
-2. **API Gateway** - A reverse proxy that routes requests to the appropriate service. It handles user requests, authenticates it and forwards them to appropriate service endpoint.
-3. **AuthService** - Manages user authentication and generates JWT tokens for authorized users.
-4. **TaskQueueService** - Manages the task queue for code execution requests. It receives requests from users and pushes those task requests on code-execution-queue for execution.
-5. **ExecutionService** - Executes code by consuming task requests from code-execution queue and pushes response to execution-response-queue. The is support for 4 different programming languages : Java, Python, JavaScript, and Ruby.
-6. **PostgreSQL** - Stores user data, task/code execution results, and other relevant data (execution logs/metadata).
-7. **RabbitMQ** - Handles asynchronous communication between services. TaskQueueService and ExecutionService communicate through RabbitMQ to process execution requests.
-
-![Architecture Diagram](Architecture%20daigram.png)
+- **Spring Boot:** The robust backend framework for crafting microservices.
+- **Docker:** The containerization champion for packaging and deploying applications.
+- **RabbitMQ:** The reliable messaging broker for inter-service communication.
+- **PostgreSQL:** The trusted relational database for user and task data.
+- **Eureka (Service Registry):** The maestro of service discovery.
+- **AWS Elastic Beanstalk:** The platform-as-a-service (PaaS) for deploying Dockerized applications.
+- **Docker Compose:** The conductor for defining and running multi-container applications.
 
 ---
 
-## Setup and Installation
+## Architectural Brilliance](#architecture)
+
+Coderank embraces a **microservices architecture**, a symphony of components working together:
+
+1. **ServiceRegistry (Eureka):** The central registry, acting as the service discovery maestro for all other services.
+2. **API Gateway:** The facade, a reverse proxy that routes requests to the appropriate service. It handles user requests, performs authentication, and forwards them to the designated service endpoint.
+3. **AuthService:** The gatekeeper, safeguarding the system through user authentication and generating JWT tokens for authorized access.
+4. **TaskQueueService:** The conductor, managing the task queue for code execution requests. It receives user requests and pushes them onto the `code-execution-queue` for processing.
+5. **ExecutionService:** The virtuoso, a master of code execution. It consumes tasks from the `code-execution-queue`, executes the code in the requested language (Java, Python, JavaScript, or Ruby!), and pushes the response to the `execution-response-queue`.
+6. **PostgreSQL:** The data vault, securely storing user information, task/code execution results, and other relevant data (execution logs/metadata).
+7. **RabbitMQ:** The messenger, enabling asynchronous communication between services. TaskQueueService and ExecutionService leverage RabbitMQ to process execution requests seamlessly.
+
+(Architecture%20daigram.png)  ---
+
+## Getting Started Guide](#setup-and-installation)
 
 ### Prerequisites
 
-Before getting started, ensure that the following tools are installed:
+Before embarking on your coding adventure, ensure you have these tools installed:
 
-- **Docker Desktop** (for containerization)
+- **Docker Desktop** (for containerization magic)
 - **Git** (for version control)
-- **Intellij Idea Community Edition** (for code IDE)
+- **Intellij Idea Community Edition** (your trusty code IDE)
 
-### Clone the Repository
+### Cloning the Repository
 
-Clone the project repository to your local machine:
+To initiate your coding journey, clone the project repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/coderank.git
+git clone [https://github.com/yourusername/coderank.git](https://github.com/yourusername/coderank.git)
 cd coderank

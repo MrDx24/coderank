@@ -41,7 +41,6 @@ public class CodeExecutionStorageService {
     }
 
     public void saveExecutionLog(String codeId, String output, String status, long executionTime) {
-        // Upload output or error to S3
         String outputS3Url = s3Service.uploadFile(output, codeId + "-output.txt");
 
         ExecutionLogs executionLog = new ExecutionLogs();

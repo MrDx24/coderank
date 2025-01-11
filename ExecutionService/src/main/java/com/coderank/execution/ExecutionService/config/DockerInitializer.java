@@ -3,6 +3,7 @@ package com.coderank.execution.ExecutionService.config;
 import com.coderank.execution.ExecutionService.model.DockerInitializerHelper;
 import com.coderank.execution.ExecutionService.service.DockerService;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -10,8 +11,10 @@ import java.util.List;
 
 @Component
 public class DockerInitializer {
+
     private final DockerService dockerService;
 
+    @Autowired
     public DockerInitializer(DockerService dockerService) {
         this.dockerService = dockerService;
     }
@@ -19,9 +22,7 @@ public class DockerInitializer {
     @PostConstruct
     public void initializeDockerImages() {
 
-        String buildContextPath = new File("").getAbsolutePath()
-                + File.separator + "ExecutionService"
-                + File.separator + "docker";
+        String buildContextPath = "/app/ExecutionService/docker";
 
         List<DockerInitializerHelper> dockerConfigs = List.of(
                 new DockerInitializerHelper("java" ),
@@ -32,8 +33,8 @@ public class DockerInitializer {
 
         dockerConfigs.forEach(config -> {
             try {
-                String contextPath = buildContextPath + File.separator + config.getLanguage();
-                String dockerfilePath = contextPath + File.separator + config.getDockerfileName();
+                String contextPath = buildContextPath + "/" + config.getLanguage();
+                String dockerfilePath = contextPath + "/Dockerfile-" + config.getLanguage();
 
                 dockerService.buildDockerImage(config.getImageName(), dockerfilePath, contextPath);
             } catch (Exception e) {

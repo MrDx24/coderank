@@ -19,10 +19,6 @@ public class ResponseQueueListener {
     @RabbitListener(queues = "execution-response-queue")
     public void receiveExecutionResponse(ExecutionResponse response) {
         try {
-            log.info("*************************************************************************");
-            log.info("Received execution response for request: {}", response.getRequestId());
-
-            // Complete the future with the response
             CompletableFuture<ExecutionResponse> future = responseHolder.getFuture(response.getRequestId());
             if (future != null) {
                 future.complete(response);

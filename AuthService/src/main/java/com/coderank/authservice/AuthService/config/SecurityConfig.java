@@ -20,11 +20,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    @Autowired
-    JwtAuthenticationFilter filter;
+    private final JwtAuthenticationFilter filter;
+    private final AuthService authService;
 
     @Autowired
-    private AuthService authService;
+    public SecurityConfig(JwtAuthenticationFilter filter, AuthService authService) {
+        this.filter = filter;
+        this.authService = authService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -46,7 +49,8 @@ public class SecurityConfig {
                 )
                 .headers(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

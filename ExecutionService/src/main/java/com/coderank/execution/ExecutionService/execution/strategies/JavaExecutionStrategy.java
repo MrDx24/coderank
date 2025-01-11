@@ -2,6 +2,7 @@ package com.coderank.execution.ExecutionService.execution.strategies;
 
 import com.coderank.execution.ExecutionService.service.DockerService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,12 +11,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JavaExecutionStrategy implements CodeExecutionStrategy {
 
-    private final DockerService dockerService;
     private final String memoryLimit;
     private final String cpuLimit;
 
-    public JavaExecutionStrategy(DockerService dockerService, String memoryLimit, String cpuLimit) {
-        this.dockerService = dockerService;
+    @Autowired
+    public JavaExecutionStrategy(String memoryLimit, String cpuLimit) {
         this.memoryLimit = memoryLimit;
         this.cpuLimit = cpuLimit;
     }

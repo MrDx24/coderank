@@ -34,16 +34,11 @@ public class TaskQueueController {
             String requestId = UUID.randomUUID().toString();
             MessagePayload payload = new MessagePayload(requestId, userId, request.getLanguage(), request.getCode());
 
-
-            // Create a CompletableFuture to hold the response
             CompletableFuture<ExecutionResponse> future = new CompletableFuture<>();
             responseHolder.putFuture(requestId, future);
 
-            // Send the request
             rabbitTemplate.convertAndSend("code-execution-queue", payload);
 
-            //return ResponseEntity.ok("Received : " +  payload);
-            // Wait for the response with a timeout
             try {
                 ExecutionResponse response = future.get(100, TimeUnit.SECONDS);
                 return ResponseEntity.ok(response);

@@ -1,4 +1,3 @@
-#spring.application.name=ApiGateway
 server:
   port: 8081
 
@@ -10,31 +9,11 @@ spring:
       discovery:
         locator:
           enabled: true
-      routes:
-        - id: AUTH-SERVICE
-          #uri: lb://AUTH-SERVICE       # Use load-balanced URI for AUTH-SERVICE
-          uri: http://localhost:8082    # Use localhost URI
-          predicates:
-            - Path=/api/v1/users/**
-
-        - id: TASKQUEUE-SERVICE
-          #uri: lb://TASKQUEUE-SERVICE  # Load-balanced URI for TASKQUEUE-SERVICE
-          uri: http://localhost:8083    # Use localhost URI
-          predicates:
-            - Path=/api/v1/tasks/**
-
-        - id: EXECUTION-SERVICE
-          #uri: lb://EXECUTION-SERVICE  # Load-balanced URI for EXECUTION-SERVICE
-          uri: http://localhost:8084    # Use localhost URI
-          predicates:
-            - Path=/api/v1/code-execution/**
-
 
 auth:
   service:
-    url: http://localhost:8082/api/v1/users
     #url: http://AUTH-SERVICE:8082/api/v1/users
-
+    url: http://localhost:8082/api/v1/users
 
 eureka:
   client:

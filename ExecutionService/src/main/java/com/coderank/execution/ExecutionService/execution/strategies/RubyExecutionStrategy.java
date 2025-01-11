@@ -2,6 +2,7 @@ package com.coderank.execution.ExecutionService.execution.strategies;
 
 import com.coderank.execution.ExecutionService.service.DockerService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.io.BufferedReader;
@@ -13,20 +14,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RubyExecutionStrategy implements CodeExecutionStrategy {
 
-    private final DockerService dockerService;
     private final String memoryLimit;
     private final String cpuLimit;
 
-    public RubyExecutionStrategy(DockerService dockerService, String memoryLimit, String cpuLimit) {
-        this.dockerService = dockerService;
+    @Autowired
+    public RubyExecutionStrategy(String memoryLimit, String cpuLimit) {
         this.memoryLimit = memoryLimit;
         this.cpuLimit = cpuLimit;
     }
 
     @Override
     public String execute(String code) throws Exception {
-        log.info("Executing Ruby code with memory limit: {} and CPU limit: {}", memoryLimit, cpuLimit);
-
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "docker", "run", "--rm",
                 "--memory", memoryLimit,
@@ -39,7 +37,6 @@ public class RubyExecutionStrategy implements CodeExecutionStrategy {
         processBuilder.redirectErrorStream(true);
 
         Process process = processBuilder.start();
-
         String output = new BufferedReader(new InputStreamReader(process.getInputStream()))
                 .lines()
                 .collect(Collectors.joining("\n"));

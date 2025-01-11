@@ -24,18 +24,17 @@ import java.util.Map;
 @RequestMapping("/api/v1/users")
 public class AuthController {
 
-    private AuthService authService;
-    private AuthRepository authRepository;
-    private JwtService jwtService;
-    private PasswordEncoder passwordEncoder;
-    private AuthenticationManager authenticationManager;
+    private final AuthService authService;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, AuthRepository authRepository, AuthService authService, JwtService jwtService) {
+    public AuthController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder,
+                          AuthService authService, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
-        this.authRepository = authRepository;
         this.authService = authService;
     }
 
@@ -44,14 +43,14 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            if (authRepository.findByEmail(userDetails.getEmail()).isPresent()) {
+            if (authService.emailExists(userDetails.getEmail())) {
                 response.put("status", "Error");
                 response.put("message", "Email already exists");
                 return ResponseEntity.ok(response);
             }
 
             userDetails.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-            Users userResp = authRepository.save(userDetails);
+            Users userResp = authService.saveUser(userDetails);
 
             response.put("status", "Success");
             response.put("message", "User registered successfully");
@@ -70,7 +69,6 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Authenticate user
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginDto.getEmail(),
@@ -79,11 +77,9 @@ public class AuthController {
             );
 
             if (authentication.isAuthenticated()) {
-                // Extract email from the Authentication object
                 String email = authentication.getName();
 
-                // Fetch user details from your database (repository)
-                Users userDetails = authRepository.findByEmail(email)
+                Users userDetails = authService.findUserByEmail(email)
                         .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
 
                 String token = jwtService.generateToken(userDetails.getEmail());
@@ -112,20 +108,16 @@ public class AuthController {
         }
 
         try {
-            // Authenticate user
             boolean checkClaim = jwtService.isTokenValid(token);
 
-            // Check if JWT token is valid or not
             if (checkClaim) {
                 response.put("status", "Success");
                 return ResponseEntity.ok(response);
             } else {
-                // Handle case where authentication fails
                 response.put("status", "Authentication failed");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
         } catch (Exception e) {
-            // Handle any other exceptions that may occur
             response.put("status", "Error");
             response.put("message", "An error occurred: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

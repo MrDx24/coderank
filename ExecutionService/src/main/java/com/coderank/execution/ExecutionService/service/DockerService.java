@@ -42,29 +42,5 @@ public class DockerService {
         log.info("Docker image built successfully: {}", imageName);
     }
 
-    public String runDockerContainer(String imageName, String inputFilePath) throws Exception {
-
-        if (!imageBuiltStatus.getOrDefault(imageName, false)) {
-            throw new RuntimeException("Docker image not built: " + imageName);
-        }
-
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                "docker", "run", "--rm", "-v", inputFilePath + ":/app/input", imageName
-        );
-        processBuilder.redirectErrorStream(true);
-
-        Process process = processBuilder.start();
-        String output = new BufferedReader(new InputStreamReader(process.getInputStream()))
-                .lines()
-                .collect(Collectors.joining("\n"));
-
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            throw new RuntimeException("Docker container run failed:\n" + output);
-        }
-
-        return output;
-    }
-
 }
 

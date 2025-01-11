@@ -22,25 +22,21 @@ public class ExecutionService {
 
     @Autowired
     public ExecutionService(RabbitTemplate rabbitTemplate,
-                            DockerService dockerService,
                             CodeExecutionStorageService storageService,
                             @Value("${code.execution.memory.limit}") String memoryLimit,
                             @Value("${code.execution.cpu.limit}") String cpuLimit) {
         this.rabbitTemplate = rabbitTemplate;
-        this.strategyFactory = new CodeExecutionStrategyFactory(dockerService, memoryLimit, cpuLimit);
+        this.strategyFactory = new CodeExecutionStrategyFactory(memoryLimit, cpuLimit);
         this.storageService = storageService;
     }
 
     @RabbitListener(queues = "code-execution-queue")
     public void consumeMessage(MessagePayload payload) {
         long startTime = System.currentTimeMillis();
-
-        // Save initial CodeSnippet metadata in the database
         CodeSnippet codeSnippet = storageService.saveCodeSnippet(payload);
+
         try {
             String reqId = payload.getRequestId();
-            log.info("Processing execution request: {}", reqId);
-
             CodeExecutionStrategy strategy = strategyFactory.getStrategy(payload.getLanguage());
             String output = strategy.execute(payload.getCode());
 
@@ -62,16 +58,10 @@ public class ExecutionService {
         long time = System.currentTimeMillis() - startTime;
 
         String errorMessage = String.format("[%s] %s: %s", errorType, e.getClass().getSimpleName(), e.getMessage());
-
-        log.error("Error processing execution request: {}", errorMessage, e);
-
-        // Save ExecutionLogs for ERROR
         storageService.saveExecutionLog(codeSnippet.getId(), errorMessage, "ERROR", time);
 
-        // Prepare error responses
         ExecutionResponse executionResponse = new ExecutionResponse(
                 payload.getRequestId(), errorMessage, time, "ERROR");
-
         rabbitTemplate.convertAndSend("execution-response-queue", executionResponse);
     }
 }
