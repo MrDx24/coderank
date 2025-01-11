@@ -53,8 +53,9 @@ public class AuthController {
             Users userResp = authService.saveUser(userDetails);
 
             response.put("status", "Success");
-            response.put("message", "User registered successfully");
-            response.put("userId", userResp); // example of additional data if needed
+            response.put("message", "User Registered Successfully");
+            response.put("userName", userResp.getUsername()); // example of additional data if needed
+            response.put("userEmail", userResp.getEmail()); // example of additional data if needed
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
@@ -83,6 +84,7 @@ public class AuthController {
                         .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
 
                 String token = jwtService.generateToken(userDetails.getEmail());
+                response.put("status", "Success");
                 response.put("message", "Login successful");
                 response.put("token", token);
                 return ResponseEntity.ok(response);
